@@ -89,8 +89,8 @@ extern "C" {
 #define PMW3610_X_L_POS 1
 #define PMW3610_Y_L_POS 2
 #define PMW3610_XY_H_POS 3
-#define PMW3610_SHUTTER_H_POS 5
-#define PMW3610_SHUTTER_L_POS 6
+#define PMW3610_SHUTTER_H_POS 4
+#define PMW3610_SHUTTER_L_POS 5
 
 /* cpi/resolution range */
 #define PMW3610_MAX_CPI 3200
@@ -103,10 +103,16 @@ extern "C" {
 #define PMW3610_SVALUE_TO_CPI(svalue) ((uint32_t)(svalue).val1)
 #define PMW3610_SVALUE_TO_TIME(svalue) ((uint32_t)(svalue).val1)
 
-#if defined(CONFIG_PMW3610_POLLING_RATE_250) || defined(CONFIG_PMW3610_POLLING_RATE_125_SW)
-#define PMW3610_POLLING_RATE_VALUE 0x0D
+#if defined(CONFIG_PMW3610_POLLING_RATE_500)
+#define PMW3610_POLLING_RATE_VALUE 0x06  // 500Hz
+#elif defined(CONFIG_PMW3610_POLLING_RATE_250) || defined(CONFIG_PMW3610_POLLING_RATE_125_SW)
+#define PMW3610_POLLING_RATE_VALUE 0x0D  // 250Hz
 #elif defined(CONFIG_PMW3610_POLLING_RATE_125)
-#define PMW3610_POLLING_RATE_VALUE 0x00
+#define PMW3610_POLLING_RATE_VALUE 0x00  // 125Hz
+#else
+#error "A valid PMW3610 polling rate must be selected"
+#endif
+
 #else
 #error "A valid PMW3610 polling rate must be selected"
 #endif
