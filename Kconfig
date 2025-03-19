@@ -62,7 +62,6 @@ choice
 config PMW3610_POLLING_RATE_500
     bool "500 Hz"
 
-
 config PMW3610_POLLING_RATE_250
     bool "250 Hz"
 

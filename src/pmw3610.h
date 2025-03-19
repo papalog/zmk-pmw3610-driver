@@ -113,10 +113,6 @@ extern "C" {
 #error "A valid PMW3610 polling rate must be selected"
 #endif
 
-#else
-#error "A valid PMW3610 polling rate must be selected"
-#endif
-
 #ifdef CONFIG_PMW3610_FORCE_AWAKE
 #define PMW3610_FORCE_MODE_VALUE 0xF0
 #else
