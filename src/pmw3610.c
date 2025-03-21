@@ -37,10 +37,9 @@ enum pmw3610_init_step {
 //   Thus, k_sleep or delayed schedule can be used.
 static const int32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
     [ASYNC_INIT_STEP_POWER_UP] = 10, // test shows > 5ms needed
-    [ASYNC_INIT_STEP_CLEAR_OB1] =
-        200,                          // 150 us required, test shows too short,
+    [ASYNC_INIT_STEP_CLEAR_OB1] = 300,                          // 150 us required, test shows too short,
                                       // also power-up reset is added in this step, thus using 50 ms
-    [ASYNC_INIT_STEP_CHECK_OB1] = 50, // 10 ms required in spec,
+    [ASYNC_INIT_STEP_CHECK_OB1] = 100, // 10 ms required in spec,
                                       // test shows too short,
                                       // especially when integrated with display,
                                       // > 50ms is needed
@@ -638,20 +637,14 @@ static int pmw3610_report_data(const struct device *dev) {
     int16_t movement_size = abs(raw_x) + abs(raw_y);
 
     float speed_multiplier = 1.0; //速度の倍率
-    if (movement_size > 60) {
-        speed_multiplier = 3.0;
-    }else if (movement_size > 30) {
+    if (movement_size > 50) {
+        speed_multiplier = 2.5;
+    } else if (movement_size > 20) {
         speed_multiplier = 1.5;
-    }else if (movement_size > 5) {
+    } else if (movement_size > 5) {
         speed_multiplier = 1.0;
-    }else if (movement_size > 4) {
-        speed_multiplier = 0.9;
-    }else if (movement_size > 3) {
-        speed_multiplier = 0.7;
-    }else if (movement_size > 2) {
+    } else if (movement_size > 1) {
         speed_multiplier = 0.5;
-    }else if (movement_size > 1) {
-        speed_multiplier = 0.1;
     }
 
     raw_x = raw_x * speed_multiplier;

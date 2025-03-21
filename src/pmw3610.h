@@ -11,12 +11,12 @@ extern "C" {
  * k_busy_wait is used instead of k_sleep */
 // - sub-us time is rounded to us, due to the limitation of k_busy_wait, see :
 // https://github.com/zephyrproject-rtos/zephyr/issues/6498
-#define T_NCS_SCLK 1     /* 120 ns (rounded to 1us) */
+#define T_NCS_SCLK 2     /* 120 ns (rounded to 1us) */
 #define T_SCLK_NCS_WR 10 /* 10 us */
 #define T_SRAD 4         /* 4 us */
 #define T_SRAD_MOTBR 4   /* same as T_SRAD */
 #define T_SRX 1          /* 250 ns (rounded to 1 us) */
-#define T_SWX 30         /* SWW: 30 us, SWR: 20 us */
+#define T_SWX 20         /* SWW: 30 us, SWR: 20 us */
 #define T_BEXIT 1        /* 250 ns (rounded to 1us)*/
 
 /* Sensor registers (addresses) */
@@ -89,11 +89,11 @@ extern "C" {
 #define PMW3610_X_L_POS 1
 #define PMW3610_Y_L_POS 2
 #define PMW3610_XY_H_POS 3
-#define PMW3610_SHUTTER_H_POS 3
-#define PMW3610_SHUTTER_L_POS 3
+#define PMW3610_SHUTTER_H_POS 4
+#define PMW3610_SHUTTER_L_POS 5
 
 /* cpi/resolution range */
-#define PMW3610_MAX_CPI 3200
+#define PMW3610_MAX_CPI 1600
 #define PMW3610_MIN_CPI 200
 
 /* write command bit position */

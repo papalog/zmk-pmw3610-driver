@@ -23,7 +23,7 @@ config PMW3610_SMART_ALGORITHM
 
 config PMW3610_CPI
     int "PMW3610's default CPI"
-    default 800
+    default 1600
     range 200 3200
     help
       Default CPI value, with 200 step
@@ -80,7 +80,7 @@ config PMW3610_FORCE_AWAKE
 
 config PMW3610_RUN_DOWNSHIFT_TIME_MS
     int "PMW3610's default RUN mode downshift time"
-    default 128
+    default 300
     range 13 3264
     help
       Default RUN mode downshift down time in milliseconds.
@@ -88,7 +88,7 @@ config PMW3610_RUN_DOWNSHIFT_TIME_MS
 
 config PMW3610_REST1_SAMPLE_TIME_MS
     int "PMW3610's sample time in REST1 stage"
-    default 40
+    default 20
     range 10 2550
     help
       Default REST1 mode sample period in millisecond
@@ -102,7 +102,7 @@ config PMW3610_REST1_DOWNSHIFT_TIME_MS
 
 config PMW3610_REST2_SAMPLE_TIME_MS
     int "PMW3610's sample time in REST2 stage"
-    default 0
+    default 50
     range 0 2550
     help
       Default REST2 mode sample period in millisecond.
@@ -160,7 +160,7 @@ config PMW3610_INVERT_SCROLL_Y
 
 config PMW3610_AUTOMOUSE_TIMEOUT_MS
   int "Amount of milliseconds the mouse layer will be active after using the trackball"
-  default 400
+  default 600
 
 config PMW3610_ADJUSTABLE_MOUSESPEED
   bool "Enable Adujutable mouse speed"
