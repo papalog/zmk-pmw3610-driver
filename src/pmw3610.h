@@ -90,7 +90,7 @@ extern "C" {
 #define PMW3610_Y_L_POS 2
 #define PMW3610_XY_H_POS 3
 #define PMW3610_SHUTTER_H_POS 4
-#define PMW3610_SHUTTER_L_POS 5
+#define PMW3610_SHUTTER_L_POS 4
 
 /* cpi/resolution range */
 #define PMW3610_MAX_CPI 3200
