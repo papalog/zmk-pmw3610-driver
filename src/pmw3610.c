@@ -37,10 +37,9 @@ enum pmw3610_init_step {
 //   Thus, k_sleep or delayed schedule can be used.
 static const int32_t async_init_delay[ASYNC_INIT_STEP_COUNT] = {
     [ASYNC_INIT_STEP_POWER_UP] = 10, // test shows > 5ms needed
-    [ASYNC_INIT_STEP_CLEAR_OB1] =
-        200,                          // 150 us required, test shows too short,
+    [ASYNC_INIT_STEP_CLEAR_OB1] = 300,                          // 150 us required, test shows too short,
                                       // also power-up reset is added in this step, thus using 50 ms
-    [ASYNC_INIT_STEP_CHECK_OB1] = 50, // 10 ms required in spec,
+    [ASYNC_INIT_STEP_CHECK_OB1] = 100, // 10 ms required in spec,
                                       // test shows too short,
                                       // especially when integrated with display,
                                       // > 50ms is needed
@@ -612,12 +611,16 @@ static int pmw3610_report_data(const struct device *dev) {
 
     data->curr_mode = input_mode;
 
+    int16_t x;
+    int16_t y;
+
 #if AUTOMOUSE_LAYER > 0
     if (input_mode == MOVE &&
-            (automouse_triggered || zmk_keymap_highest_layer_active() != AUTOMOUSE_LAYER)
-    ) {
-        activate_automouse_layer();
-    }
+         (automouse_triggered || zmk_keymap_highest_layer_active() != AUTOMOUSE_LAYER) &&
+            (abs(x) + abs(y) > CONFIG_PMW3610_MOVEMENT_THRESHOLD)
+) {
+    activate_automouse_layer();
+}
 #endif
 
     int err = motion_burst_read(dev, buf, sizeof(buf));
@@ -629,22 +632,38 @@ static int pmw3610_report_data(const struct device *dev) {
         TOINT16((buf[PMW3610_X_L_POS] + ((buf[PMW3610_XY_H_POS] & 0xF0) << 4)), 12) / dividor;
     int16_t raw_y =
         TOINT16((buf[PMW3610_Y_L_POS] + ((buf[PMW3610_XY_H_POS] & 0x0F) << 8)), 12) / dividor;
+    
+#ifdef CONFIG_PMW3610_ADJUSTABLE_MOUSESPEED
+    int16_t movement_size = abs(raw_x) + abs(raw_y);
 
-    int16_t x;
-    int16_t y;
+    float speed_multiplier = 1.0; //速度の倍率
+    if (movement_size > 50) {
+        speed_multiplier = 2.5;
+    } else if (movement_size > 20) {
+        speed_multiplier = 1.5;
+    } else if (movement_size > 5) {
+        speed_multiplier = 1.0;
+    } else if (movement_size > 1) {
+        speed_multiplier = 0.5;
+    }
+
+    raw_x = raw_x * speed_multiplier;
+    raw_y = raw_y * speed_multiplier;
+
+#endif
 
     if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_0)) {
-        x = -raw_x;
-        y = raw_y;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
-        x = raw_y;
-        y = -raw_x;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
         x = raw_x;
         y = -raw_y;
-    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_90)) {
         x = -raw_y;
         y = raw_x;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_180)) {
+        x = -raw_x;
+        y = raw_y;
+    } else if (IS_ENABLED(CONFIG_PMW3610_ORIENTATION_270)) {
+        x = raw_y;
+        y = -raw_x;
     }
 
     if (IS_ENABLED(CONFIG_PMW3610_INVERT_X)) {
@@ -689,6 +708,15 @@ static int pmw3610_report_data(const struct device *dev) {
 
     if (x != 0 || y != 0) {
         if (input_mode != SCROLL) {
+#if AUTOMOUSE_LAYER > 0
+            // トラックボールの動きの大きさを計算
+            int16_t movement_size = abs(x) + abs(y);
+            if (input_mode == MOVE &&
+                (automouse_triggered || zmk_keymap_highest_layer_active() != AUTOMOUSE_LAYER) &&
+                movement_size > CONFIG_PMW3610_MOVEMENT_THRESHOLD) {
+                activate_automouse_layer();
+            }
+#endif
             input_report_rel(dev, INPUT_REL_X, x, false, K_FOREVER);
             input_report_rel(dev, INPUT_REL_Y, y, true, K_FOREVER);
         } else {
