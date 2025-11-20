@@ -11,12 +11,12 @@ extern "C" {
  * k_busy_wait is used instead of k_sleep */
 // - sub-us time is rounded to us, due to the limitation of k_busy_wait, see :
 // https://github.com/zephyrproject-rtos/zephyr/issues/6498
-#define T_NCS_SCLK 2     /* 120 ns (rounded to 1us) */
+#define T_NCS_SCLK 1     /* 120 ns (rounded to 1us) */
 #define T_SCLK_NCS_WR 10 /* 10 us */
 #define T_SRAD 4         /* 4 us */
 #define T_SRAD_MOTBR 4   /* same as T_SRAD */
 #define T_SRX 1          /* 250 ns (rounded to 1 us) */
-#define T_SWX 20         /* SWW: 30 us, SWR: 20 us */
+#define T_SWX 30         /* SWW: 30 us, SWR: 20 us */
 #define T_BEXIT 1        /* 250 ns (rounded to 1us)*/
 
 /* Sensor registers (addresses) */
@@ -89,11 +89,11 @@ extern "C" {
 #define PMW3610_X_L_POS 1
 #define PMW3610_Y_L_POS 2
 #define PMW3610_XY_H_POS 3
-#define PMW3610_SHUTTER_H_POS 4
-#define PMW3610_SHUTTER_L_POS 5
+#define PMW3610_SHUTTER_H_POS 5
+#define PMW3610_SHUTTER_L_POS 6
 
 /* cpi/resolution range */
-#define PMW3610_MAX_CPI 1600
+#define PMW3610_MAX_CPI 3200
 #define PMW3610_MIN_CPI 200
 
 /* write command bit position */
@@ -103,12 +103,10 @@ extern "C" {
 #define PMW3610_SVALUE_TO_CPI(svalue) ((uint32_t)(svalue).val1)
 #define PMW3610_SVALUE_TO_TIME(svalue) ((uint32_t)(svalue).val1)
 
-#if defined(CONFIG_PMW3610_POLLING_RATE_500)
-#define PMW3610_POLLING_RATE_VALUE 0x06  // 500Hz
-#elif defined(CONFIG_PMW3610_POLLING_RATE_250) || defined(CONFIG_PMW3610_POLLING_RATE_125_SW)
-#define PMW3610_POLLING_RATE_VALUE 0x0D  // 250Hz
+#if defined(CONFIG_PMW3610_POLLING_RATE_250) || defined(CONFIG_PMW3610_POLLING_RATE_125_SW)
+#define PMW3610_POLLING_RATE_VALUE 0x0D
 #elif defined(CONFIG_PMW3610_POLLING_RATE_125)
-#define PMW3610_POLLING_RATE_VALUE 0x00  // 125Hz
+#define PMW3610_POLLING_RATE_VALUE 0x00
 #else
 #error "A valid PMW3610 polling rate must be selected"
 #endif
@@ -122,19 +120,19 @@ extern "C" {
 #define PMW3610_PERFORMANCE_VALUE (PMW3610_FORCE_MODE_VALUE | PMW3610_POLLING_RATE_VALUE)
 
 #ifdef CONFIG_PMW3610_INVERT_SCROLL_X
-#define PMW3610_SCROLL_X_NEGATIVE -1
-#define PMW3610_SCROLL_X_POSITIVE 1
-#else
 #define PMW3610_SCROLL_X_NEGATIVE 1
 #define PMW3610_SCROLL_X_POSITIVE -1
+#else
+#define PMW3610_SCROLL_X_NEGATIVE -1
+#define PMW3610_SCROLL_X_POSITIVE 1
 #endif
 
 #ifdef CONFIG_PMW3610_INVERT_SCROLL_Y
-#define PMW3610_SCROLL_Y_NEGATIVE -1
-#define PMW3610_SCROLL_Y_POSITIVE 1
-#else
 #define PMW3610_SCROLL_Y_NEGATIVE 1
 #define PMW3610_SCROLL_Y_POSITIVE -1
+#else
+#define PMW3610_SCROLL_Y_NEGATIVE -1
+#define PMW3610_SCROLL_Y_POSITIVE 1
 #endif
 
 #ifdef __cplusplus
